@@ -1,7 +1,7 @@
 {
   "name": "bunny-gpt",
   "version": "0.0.1",
-  "description": "",
+  "description": "Bunny GPT is a simple, modern, and powerful discord bot based on gpt-3.5 model and discord.js v13. It is a multi-purpose bot that can be used for moderation, fun, utility, and more!",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
@@ -20,9 +20,14 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@discordjs/core": "^0.6.0",
     "@nestjs/common": "^9.0.0",
+    "@nestjs/config": "^3.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
+    "discord.js": "^14.11.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
   },
