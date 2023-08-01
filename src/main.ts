@@ -80,7 +80,7 @@ async function bootstrap() {
         channelsAPI.showTyping(channel_id);
         try {
           const { data } = await axios.post(
-            'http://127.0.0.1:3001/chatGpt/chatResponse',
+            `${process.env.URL_PROD}/chatGpt/chatResponse`,
             {
               content: messageContent,
               role: 'user',
