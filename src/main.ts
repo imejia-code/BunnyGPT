@@ -7,10 +7,10 @@ import {
   GatewayDispatchEvents,
   GatewayIntentBits,
   Client,
-  API,
-  InteractionType,
-  MessageFlags,
 } from '@discordjs/core';
+
+import { sendMessage } from './util/messageMethods';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(
@@ -31,41 +31,31 @@ async function bootstrap() {
 
   const BunnyGPT = new Client({ rest, gateway });
 
-  const api = new API(rest);
+  // const api = new API(rest);
+  const meRest: any = await rest.get('/users/@me');
+  const { id } = meRest;
 
   BunnyGPT.on(GatewayDispatchEvents.Ready, () => {
     console.log('BunnyGPT is ready!');
   });
 
   BunnyGPT.on(
-    GatewayDispatchEvents.InteractionCreate,
-    async ({ data: interaction, api }) => {
-      if (
-        interaction.type !== InteractionType.ApplicationCommand ||
-        interaction.data.name !== 'ping'
-      ) {
-        return;
+    GatewayDispatchEvents.MessageCreate,
+    async ({ data: message }) => {
+      const messageArray = message.content.split(' ');
+      if (messageArray[0] === `<@${id}>`) {
+        const { channel_id } = message;
+        if (messageArray.length <= 1) {
+          await sendMessage(
+            'Hola, soy BunnyGPT. Puedes preguntarme lo que quieras!',
+            channel_id,
+            rest,
+          );
+        }
       }
-      await api.interactions.reply(interaction.id, interaction.token, {
-        content: 'Pong!',
-        flags: MessageFlags.Ephemeral,
-      });
     },
   );
 
-  const commands = [
-    {
-      name: 'ping',
-      description: 'Replies with Pong!',
-    },
-  ];
-
-  api.applicationCommands
-    .bulkOverwriteGlobalCommands(process.env.DISCORD_CLIENT_ID, commands)
-    .then(console.log)
-    .catch(console.error);
-
-  // Start the WebSocket connection.
   gateway.connect();
 
   await app.listen(process.env.PORT || 3000);
