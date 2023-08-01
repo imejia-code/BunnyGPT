@@ -112,6 +112,7 @@ async function bootstrap() {
             },
           });
         } catch (error) {
+          console.log(error);
           channelsAPI.createMessage(channel_id, {
             embeds: [
               {
