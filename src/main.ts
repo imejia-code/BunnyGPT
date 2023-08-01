@@ -40,6 +40,9 @@ async function bootstrap() {
   const { username, id } = await usersAPI.getCurrent();
   BunnyGPT.on(GatewayDispatchEvents.Ready, () => {
     console.log(`${username} is ready! with id ${id}`);
+    console.log(process.env.DISCORD_TOKEN);
+    console.log(process.env.OPENAI_API_KEY);
+    console.log(process.env.URL_PROD);
     BunnyGPT.updatePresence(0, {
       activities: [{ name: 'GPT-3', type: 3 }],
       since: 0,
@@ -80,7 +83,7 @@ async function bootstrap() {
         channelsAPI.showTyping(channel_id);
         try {
           const { data } = await axios.post(
-            `https://breezy-straw-production.up.railway.app/chatGpt/chatResponse`,
+            `${process.env.URL_PROD}/chatGpt/chatResponse`,
             {
               content: messageContent,
               role: 'user',
