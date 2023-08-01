@@ -80,7 +80,7 @@ async function bootstrap() {
         channelsAPI.showTyping(channel_id);
         try {
           const { data } = await axios.post(
-            `${process.env.URL_PROD}/chatGpt/chatResponse`,
+            `https://breezy-straw-production.up.railway.app/chatGpt/chatResponse`,
             {
               content: messageContent,
               role: 'user',

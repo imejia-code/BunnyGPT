@@ -17,16 +17,14 @@ export class chatGPTGuard implements CanActivate {
     if (!openIAKey) {
       throw new UnauthorizedException();
     }
-    console.log(openIAKey);
 
     try {
-      const test = await axios.get(' https://api.openai.com/v1/models', {
+      await axios.get(' https://api.openai.com/v1/models', {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${openIAKey}`,
         },
       });
-      console.log(test);
       return true;
     } catch (error) {
       throw new UnauthorizedException();
