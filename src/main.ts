@@ -77,15 +77,22 @@ async function bootstrap() {
           });
           return;
         }
-        if (messageContent.includes('quien te creo' || 'quien te hizo' || 'quien te programo')) {
+        if (
+          messageContent.includes(
+            'quien te creo' || 'quien te hizo' || 'quien te programo',
+          )
+        ) {
           channelsAPI.createMessage(channel_id, {
-            content: 'Me creo mi creador, un humano llamado @KaiserBlack, en conjunto con la ayuda de OpenIA',
+            content:
+              'Me creo mi creador, un humano llamado @KaiserBlack, en conjunto con la ayuda de OpenIA',
             message_reference: {
               message_id: message.id,
               channel_id: message.channel_id,
               guild_id: message.guild_id,
             },
           });
+          return;
+        }
         channelsAPI.showTyping(channel_id);
         try {
           const { data } = await axios.post(
