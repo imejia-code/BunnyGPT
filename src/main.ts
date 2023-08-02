@@ -79,7 +79,12 @@ async function bootstrap() {
         }
         if (
           messageContent.includes(
-            'quien te creo' || 'quien te hizo' || 'quien te programo',
+            'quien te creo' ||
+              'quien te hizo' ||
+              'quien te programo' ||
+              'Quien te creo' ||
+              'Quien te hizo' ||
+              'Quien te programo',
           )
         ) {
           channelsAPI.createMessage(channel_id, {
