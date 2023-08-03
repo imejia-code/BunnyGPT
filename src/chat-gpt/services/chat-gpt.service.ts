@@ -21,7 +21,6 @@ export class ChatGptService {
     const completion = await this.openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
       messages: [{ role: role, content: message }],
-      max_tokens: 600,
     });
 
     return {
