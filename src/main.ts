@@ -14,6 +14,7 @@ import {
 } from '@discordjs/core';
 
 import axios from 'axios';
+import { sliceMessageAndSend } from './chat-gpt/util/messageData';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -32,16 +33,18 @@ async function bootstrap() {
       GatewayIntentBits.GuildMessageReactions,
     rest,
   });
+
   const channelsAPI = new ChannelsAPI(rest);
   const usersAPI = new UsersAPI(rest);
 
   const BunnyGPT = new Client({ rest, gateway });
 
   const { username, id } = await usersAPI.getCurrent();
+
   BunnyGPT.on(GatewayDispatchEvents.Ready, () => {
     console.log(`${username} is ready! with id ${id}`);
     BunnyGPT.updatePresence(0, {
-      activities: [{ name: 'GPT-3', type: 3 }],
+      activities: [{ name: process.env.STATE, type: 3 }],
       since: 0,
       afk: false,
       status: PresenceUpdateStatus.Online,
@@ -66,7 +69,15 @@ async function bootstrap() {
           return;
         }
         const messageContent = messageArray.slice(1).join(' ');
-        if (messageContent.includes('llamas' || 'llamarse' || 'nombre')) {
+        const patternName = new RegExp(
+          'te llamas|tu nombre|es tu nombre\b',
+          'i',
+        );
+        const patternOwner = new RegExp(
+          'te creo|tu creador|te hizo|te programo\b',
+          'i',
+        );
+        if (patternName.test(messageContent)) {
           channelsAPI.createMessage(channel_id, {
             content: 'Me llamo BunnyGPT, un gusto conocerte!',
             message_reference: {
@@ -77,19 +88,10 @@ async function bootstrap() {
           });
           return;
         }
-        if (
-          messageContent.includes(
-            'quien te creo' ||
-              'quien te hizo' ||
-              'quien te programo' ||
-              'Quien te creo' ||
-              'Quien te hizo' ||
-              'Quien te programo',
-          )
-        ) {
+        if (patternOwner.test(messageContent)) {
           channelsAPI.createMessage(channel_id, {
             content:
-              'Me creo mi creador, un humano llamado @KaiserBlack, en conjunto con la ayuda de OpenIA',
+              'Me creo un humano llamado @KaiserBlack, en conjunto con la ayuda de OpenIA API',
             message_reference: {
               message_id: message.id,
               channel_id: message.channel_id,
@@ -101,7 +103,7 @@ async function bootstrap() {
         channelsAPI.showTyping(channel_id);
         try {
           const { data } = await axios.post(
-            `${process.env.URL_PROD}/chatGpt/chatResponse`,
+            `${process.env.LOCAL_URL}/chatGpt/chatResponse`,
             {
               content: messageContent,
               role: 'user',
@@ -124,14 +126,13 @@ async function bootstrap() {
           \nfinish_reason: 
           ${finishReason}`;
           console.log(logData);
-          channelsAPI.createMessage(channel_id, {
-            content: responseMessage.content,
-            message_reference: {
-              message_id: message.id,
-              channel_id: message.channel_id,
-              guild_id: message.guild_id,
-            },
-          });
+          sliceMessageAndSend(
+            responseMessage.content,
+            channelsAPI,
+            channel_id,
+            message.id,
+            message.guild_id,
+          );
         } catch (error) {
           console.log(error);
           channelsAPI.createMessage(channel_id, {

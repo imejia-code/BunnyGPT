@@ -7,7 +7,7 @@ import { ChatGptModule } from './chat-gpt/chat-gpt.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: [`.env`],
+      envFilePath: [`.env.dev`, `.env.`],
       isGlobal: true,
     }),
     ChatGptModule,
