@@ -42,7 +42,7 @@ async function bootstrap() {
   const { username, id } = await usersAPI.getCurrent();
 
   BunnyGPT.on(GatewayDispatchEvents.Ready, () => {
-    console.log(`${username} is ready! with id ${id}`);
+    console.info(`${username} is ready! with id ${id}`);
     BunnyGPT.updatePresence(0, {
       activities: [{ name: process.env.STATE, type: 3 }],
       since: 0,
@@ -114,7 +114,7 @@ async function bootstrap() {
                 Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
               },
             },
-          );
+          )
           const { message: responseMessage, usage, finishReason } = data;
           const logData = `[${new Date(message.timestamp)}]: ,
           User: 
@@ -125,7 +125,7 @@ async function bootstrap() {
           ${JSON.stringify(usage)}
           \nfinish_reason: 
           ${finishReason}`;
-          console.log(logData);
+          // console.log(logData);
           sliceMessageAndSend(
             responseMessage.content,
             channelsAPI,
@@ -134,7 +134,7 @@ async function bootstrap() {
             message.guild_id,
           );
         } catch (error) {
-          console.log(error);
+          console.error(error);
           channelsAPI.createMessage(channel_id, {
             embeds: [
               {
