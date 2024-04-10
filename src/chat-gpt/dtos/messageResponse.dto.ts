@@ -8,3 +8,4 @@ export class messageResponseDto {
   finishReason: string;
   usage: CreateCompletionResponseUsage;
 }
+

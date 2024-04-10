@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import {
   ChatCompletionRequestMessageRoleEnum,
   Configuration,
@@ -18,15 +18,19 @@ export class ChatGptService {
     message: string,
     role: ChatCompletionRequestMessageRoleEnum,
   ): Promise<messageResponseDto> {
-    const completion = await this.openai.createChatCompletion({
-      model: 'gpt-3.5-turbo',
-      messages: [{ role: role, content: message }],
-    });
+    try{
+      const completion = await this.openai.createChatCompletion({
+        model: 'gpt-3.5-turbo',
+        messages: [{ role: role, content: message }],
+      })
 
-    return {
-      message: completion.data.choices[0].message,
-      finishReason: completion.data.choices[0].finish_reason,
-      usage: completion.data.usage,
-    };
+      return {
+        message: completion.data.choices[0].message,
+        finishReason: completion.data.choices[0].finish_reason,
+        usage: completion.data.usage,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, 500);
+    }
   }
 }
