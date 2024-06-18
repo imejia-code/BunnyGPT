@@ -15,6 +15,7 @@ import {
 
 import axios from 'axios';
 import { sliceMessageAndSend } from './chat-gpt/util/messageData';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -23,6 +24,18 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
+
+  const config = new DocumentBuilder()
+  .setTitle('BunnyGPT API')
+  .setDescription('Bunny gpt is a discord bot that uses OpenAI API to chat with users.')
+  .setVersion('1.0')
+  .addBearerAuth({ type: "http" }, "chatGpt auth")
+  .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document ,{
+    customSiteTitle: 'BunnyGPT API Docs',
+  });
+
   const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
   const gateway = new WebSocketManager({
     token: process.env.DISCORD_TOKEN,
