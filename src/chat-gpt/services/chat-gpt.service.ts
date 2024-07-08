@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import {
   ChatCompletionRequestMessageRoleEnum,
   Configuration,
@@ -30,7 +30,7 @@ export class ChatGptService {
         usage: completion.data.usage,
       };
     } catch (error) {
-      throw new HttpException(error.message, 500);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }
