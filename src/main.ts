@@ -16,6 +16,7 @@ import {
 import axios from 'axios';
 import { sliceMessageAndSend } from './chat-gpt/util/messageData';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as basicAuth from 'express-basic-auth';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -23,6 +24,16 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
     }),
+  );
+
+  app.use(
+    ["/docs", "/docs-json"],
+    basicAuth({
+      challenge: true,
+      users: {
+        [process.env.SWAGGER_ADMIN_USERNAME]: process.env.SWAGGER_ADMIN_PASSWORD,
+      },
+    })
   );
 
   const config = new DocumentBuilder()
