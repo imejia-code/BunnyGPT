@@ -20,7 +20,7 @@ export class ChatGptService {
   ): Promise<messageResponseDto> {
     try{
       const completion = await this.openai.createChatCompletion({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4o-mini',
         messages: [{ role: role, content: message }],
       })
 
